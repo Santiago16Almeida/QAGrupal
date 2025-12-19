@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 name: Infraestructura de Test
 on:
   pull_request:
@@ -18,3 +19,59 @@ jobs:
         run: |
           terraform init
           terraform apply -auto-approve
+=======
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Login Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Build Frontend
+      - name: Build & Push Front
+        uses: docker/build-push-action@v4
+        with:
+          context: ./frontend
+          push: true
+          # CAMBIA 'tu_usuario' POR EL TUYO
+          tags: docker.io/johnal22/proyecto-front:latest
+
+      # Build Backend
+      - name: Build & Push Back
+        uses: docker/build-push-action@v4
+        with:
+          context: ./backend
+          push: true
+          # CAMBIA 'tu_usuario' POR EL TUYO
+          tags: docker.io/johnal22/proyecto-back:latest
+
+  deploy-aws:
+    needs: build-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configurar Credenciales AWS
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: us-east-1
+
+      - name: Start ASG Instance Refresh
+        run: |
+          aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name mi-asg-web-prod \
+            --preferences '{"MinHealthyPercentage": 90, "InstanceWarmup": 300}'
+>>>>>>> 7df5e4d866604b605260d23c48dad8ef1fa0c6bc
