@@ -1,25 +1,3 @@
-<<<<<<< HEAD
-name: Infraestructura de Test
-on:
-  pull_request:
-    branches: [ main, test ] # Se activa al pedir unir cambios
-
-jobs:
-  terraform:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: hashicorp/setup-terraform@v2
-      
-      - name: Terraform Apply
-        working-directory: ./terraform/envs/test
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: |
-          terraform init
-          terraform apply -auto-approve
-=======
 name: CI/CD Pipeline
 
 on:
