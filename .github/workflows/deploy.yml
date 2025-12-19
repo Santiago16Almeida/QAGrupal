@@ -52,4 +52,3 @@ jobs:
           aws autoscaling start-instance-refresh \
             --auto-scaling-group-name mi-asg-web-prod \
             --preferences '{"MinHealthyPercentage": 90, "InstanceWarmup": 300}'
->>>>>>> 7df5e4d866604b605260d23c48dad8ef1fa0c6bc
